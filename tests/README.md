@@ -1,0 +1,1 @@
+Example programs require SimpleGL to compile
