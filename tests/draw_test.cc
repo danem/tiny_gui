@@ -1,6 +1,9 @@
+#define TINY_GUI_COLOR_ABGR
 #include <SimpleGL/helpers/SimpleGLHelpers.h>
 #include <tiny_gui/tiny_gui.h>
 #include <array>
+#include <stdio.h>
+
 
 #define DATA_FILE(f) (SYNTH_DATA_DIR "/" f)
 
