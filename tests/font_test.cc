@@ -21,7 +21,15 @@ int main () {
     sgl::Texture2D fb_tx = sgl::TextureBuilder2D()
         .format(GL_RGBA, GL_RGBA8)
         .build(500, 500);
+
+    // Test font search
+    tiny_gui::Glyph glyph;
+    assert(tiny_gui::getGlyph(HelveticaBold12Font, 'z', glyph));
+    assert(tiny_gui::getGlyph(HelveticaBold5Font, 'a', glyph));
+    assert(tiny_gui::getGlyph(HelveticaBold5Font, 'z', glyph));
+    assert(!tiny_gui::getGlyph(HelveticaBold5Font, '$', glyph));
     
+    // Test Font Rendering
     tiny_gui::Rect rect; 
     rect = tiny_gui::Painter::draw_string(fb, HelveticaBold12Font, tiny_gui::WHITE, 10, 30, "abcdefghijklmnopqrstuvwxyz");
     rect = tiny_gui::Painter::draw_string(fb, HelveticaBold12Font, tiny_gui::WHITE, 10, rect.bottom+30, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
@@ -38,6 +46,15 @@ int main () {
     rect = tiny_gui::Painter::draw_string(fb, RobotoRegular14Font, tiny_gui::WHITE, 10, rect.bottom+30, "abcdefghijklmnopqrstuvwxyz");
     rect = tiny_gui::Painter::draw_string(fb, RobotoRegular14Font, tiny_gui::WHITE, 10, rect.bottom+30, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
     rect = tiny_gui::Painter::draw_string(fb, RobotoRegular14Font, tiny_gui::WHITE, 10, rect.bottom+30, "0123456789");
+
+    int y = rect.bottom + 30;
+    rect = tiny_gui::Painter::draw_string(fb, HelveticaBold5Font, tiny_gui::WHITE, 10, y, "Zz");
+    rect = tiny_gui::Painter::draw_string(fb, HelveticaBold7Font, tiny_gui::WHITE, rect.right + 5, y, "Zz");
+    rect = tiny_gui::Painter::draw_string(fb, HelveticaBold12Font, tiny_gui::WHITE, rect.right + 5, y, "Zz");
+    rect = tiny_gui::Painter::draw_string(fb, RobotoRegular8Font, tiny_gui::WHITE, rect.right + 5, y, "Zz");
+    rect = tiny_gui::Painter::draw_string(fb, RobotoRegular14Font, tiny_gui::WHITE, rect.right + 5, y, "Zz");
+
+
 
     int x = 0;
     tiny_gui::Rect clearRect;
