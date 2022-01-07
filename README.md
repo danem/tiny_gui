@@ -29,7 +29,7 @@ Still very much a work in progress.
 
 int main () {
     std::array<uint32_t, WIDTH*HEIGHT> frame_data;
-    tiny_gui::FrameBuffer fb{frame_data.data(), WIDTH, HEIGHT};
+    tiny_gui::FrameBufferMemory fb{frame_data.data(), WIDTH, HEIGHT};
     tiny_gui::Painter::draw_rect(fb, {0, 10, 0, 10}, tiny_gui::RED);
 
     your_draw_pixels_to_screen_fn(frame_data);
@@ -42,7 +42,7 @@ int main () {
 
 int main () {
     std::array<uint32_t, WIDTH*HEIGHT> frame_data;
-    tiny_gui::FrameBuffer fb{frame_data.data(), WIDTH, HEIGHT};
+    tiny_gui::FrameBufferMemory fb{frame_data.data(), WIDTH, HEIGHT};
 
     tiny_gui::Style button_style = tiny_gui::StyleBuilder()
         .set_font(&RobotoRegular8Font)
