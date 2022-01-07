@@ -9,7 +9,7 @@
 
 int main () {
     std::array<uint32_t, 500*500> frame_buffer = {0};
-    tiny_gui::FrameBuffer fb{frame_buffer.data(), 500, 500};
+    tiny_gui::FrameBufferMemory fb{frame_buffer.data(), 500, 500};
 
     sgl::Context ctx{500,500,"Foo"};
     sgl::MeshResource plane =  sgl::createPlane(1);

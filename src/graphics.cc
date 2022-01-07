@@ -10,7 +10,6 @@ void Painter::draw_bitmap (FrameBuffer& fb, Bitmap16& bitmap) {
 }
 
 void Painter::draw_bitmap (FrameBuffer& fb, Bitmap16& bitmap, uint32_t x, uint32_t y) {
-    FrameBufferView fbv = fb.view(x,y);
 }
 
 void Painter::draw_bitmap (FrameBuffer& fb, Bitmap8& bitmap) {
@@ -22,27 +21,15 @@ void Painter::draw_bitmap (FrameBuffer& fb, Bitmap8& bitmap, uint32_t x, uint32_
 }
 
 void Painter::draw_pixel (FrameBuffer& fb, uint32_t x, uint32_t y, Color color) {
-    FrameBufferView fbv = fb.view();
-    fbv.at(x,y) = color;
-}
-
-void Painter::draw_pixel (FrameBufferView& fb, uint32_t x, uint32_t y, Color color){
-    fb.at(x,y) = color;
+    fb.write(color, x, y);
 }
 
 void Painter::draw_hline (FrameBuffer& fb, uint32_t x0, uint32_t x1, uint32_t y, Color color) {
-    FrameBufferView fbv = fb.view();
-    auto row = fbv.row(y);
-    for (uint32_t i = 0; i < x1 - x0; i++){
-        row[x0 + i] = color;
-    }
+    fb.write_hline(color, x0, x1, y);
 }
 
 void Painter::draw_vline (FrameBuffer& fb, uint32_t x, uint32_t y0, uint32_t y1, Color color) {
-    FrameBufferView fbv = fb.view(x,y0);
-    for (uint32_t i = 0; i < y1 - y0; i++){
-        fbv.at(0,i) = color;
-    }
+    fb.write_vline(color, x, y0, y1);
 }
 
 void Painter::draw_line (FrameBuffer& fb, uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1, Color color) {
@@ -78,17 +65,11 @@ void Painter::draw_rect (FrameBuffer& fb, const Rect& rect, Color color){
 
 
 void Painter::fill_rect (FrameBuffer& fb, const Rect& rect, Color color) {
-    for (uint32_t j = 0; j < rect.bottom - rect.top; j++){
-        Painter::draw_hline(fb, rect.left, rect.right, (j + rect.top), color);
-    }
+    fb.write_rect(color, rect);
 }
 
 void Painter::fill_color (FrameBuffer& fb, Color color) { 
     uint32_t data = color;
-    memset_pattern4(fb.data(), &data, fb.height() * fb.width() * sizeof(uint32_t));
-}
-
-void Painter::fill_color (FrameBufferView& fb, Color color) {
     fb.set_all(color);
 }
 

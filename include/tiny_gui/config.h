@@ -1,5 +1,7 @@
 #pragma once
 #include <stdint.h>
+#include <cstddef>
+#include <string.h>
 
 // Set TINY_GUI_COLOR_ABGR to automatically convert colors to
 // ABGR format. 
@@ -23,9 +25,19 @@
 namespace tiny_gui {
 #ifdef TINY_GUI_COLOR_DEPTH_32
 using color_type = uint32_t;
+inline void tiny_gui_memset (void* dest, uint32_t v, size_t count) {
+    memset_pattern4(dest, &v, count * sizeof(color_type));
+}
+
 #else
 using color_type = uint16_t;
+inline void tiny_gui_memset (void* dest, uint16_t v, size_t count) {
+    uint32_t value = (static_cast<uint32_t>(v) << 16) | v;
+    memset_pattern4(dest, &value, count * sizeof(color_type));
+}
 #endif
+
+
 } // end namespace
 
 
