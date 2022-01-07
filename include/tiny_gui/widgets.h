@@ -113,6 +113,7 @@ public:
     {}
 
 
+    void setText (const std::string& text);
     void render (FrameBuffer& fb, const Rect& rect);
 
 };

@@ -32,6 +32,10 @@ void PushButton::render (FrameBuffer& fb, const Rect& rect) {
     Painter::draw_string(fb, *_style.font, _style.font_color, newRect.left, newRect.top, _text);
 }
 
+void PushButton::setText (const std::string& text) {
+    _text = text;
+}
+
 void Label::setText (const std::string& str){
     _text = str;
 }
