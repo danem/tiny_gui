@@ -1,3 +1,4 @@
+#define TINY_GUI_COLOR_ABGR
 #include <tiny_gui/tiny_gui.h>
 #include <tiny_gui/linked_list.h>
 #include <tiny_gui/layout.h>
@@ -13,13 +14,22 @@ tiny_gui::Style _button_style = tiny_gui::StyleBuilder()
     .set_font(&RobotoRegular8Font, tiny_gui::WHITE)
     .button_color(tiny_gui::RED, tiny_gui::BLUE, {0}, tiny_gui::GREEN)
     .build();
+
+tiny_gui::Style _menu_style = tiny_gui::StyleBuilder()
+    .set_font(&HelveticaBold5Font, tiny_gui::BLACK)
+    .button_color({0xFFebcc34}, tiny_gui::RED, {0}, tiny_gui::GREEN);
+
+
 tiny_gui::Container _dividerWidget{tiny_gui::WHITE};
 tiny_gui::Container _headerBG{{0xFF520928}};
 tiny_gui::PushButton _button1{_button_style, "Button 1"};
 tiny_gui::PushButton _button2{_button_style, "Button 2"};
 tiny_gui::PushButton _button3{_button_style, "Button 3"};
+tiny_gui::PushButton _menu1{_menu_style, "Menu 1"};
+tiny_gui::PushButton _menu2{_menu_style, "Menu 2"};
+tiny_gui::PushButton _menu3{_menu_style, "Menu 3"};
 tiny_gui::LayoutItem _root{tiny_gui::LayoutBuilder().dimensions_relative(1,1), tiny_gui::VerticalLayout};
-tiny_gui::LayoutItem _header{_headerBG, tiny_gui::LayoutBuilder().dimensions_relative(1,0.05)};
+tiny_gui::LayoutItem _header{_headerBG, tiny_gui::LayoutBuilder().dimensions_relative(1,0.05), tiny_gui::HorizontalLayout};
 tiny_gui::LayoutItem _pane1{tiny_gui::LayoutBuilder().dimensions_relative(1,0.75)};
 tiny_gui::LayoutItem _divider{_dividerWidget, tiny_gui::LayoutBuilder().dimensions(tiny_gui::Measurement::R(1), tiny_gui::Measurement::A(1))};
 tiny_gui::LayoutItem _pane2{tiny_gui::LayoutBuilder()
@@ -32,9 +42,15 @@ tiny_gui::LayoutProperties _button_layout = tiny_gui::LayoutBuilder()
     .dimensions_relative(0.3,0.7)
     .vertical_alignment(tiny_gui::Alignment::CENTER);
 
+tiny_gui::LayoutProperties _menu_layout = tiny_gui::LayoutBuilder()
+    .dimensions_relative(0.3, 1);
+
 tiny_gui::LayoutItem _button1Item{_button1, _button_layout};
 tiny_gui::LayoutItem _button2Item{_button2, _button_layout};
 tiny_gui::LayoutItem _button3Item{_button3, _button_layout};
+tiny_gui::LayoutItem _menu1Item{_menu1, _menu_layout};
+tiny_gui::LayoutItem _menu2Item{_menu2, _menu_layout};
+tiny_gui::LayoutItem _menu3Item{_menu3, _menu_layout};
 
 #define WIDTH 500
 #define HEIGHT 350
@@ -71,9 +87,14 @@ int main () {
     _root.addChild(_pane1);
     _root.addChild(_divider);
     _root.addChild(_pane2);
+    _header.addChild(_menu1Item);
+    _header.addChild(_menu2Item);
+    _header.addChild(_menu3Item);
     _pane2.addChild(_button1Item);
     _pane2.addChild(_button2Item);
     _pane2.addChild(_button3Item);
+
+    _menu1.setWidgetState(tiny_gui::WidgetState::ACTIVE);
 
     _root.calculateLayout(WIDTH, HEIGHT);
     _root.render(fb);
@@ -91,6 +112,8 @@ int main () {
         handleMouseEvent(_pane2, evt);
         _pane2.render(fb);
     });
+
+
     
     int tick = 0; 
     while (ctx.isAlive()){
