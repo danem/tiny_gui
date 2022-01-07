@@ -24,7 +24,7 @@ int main () {
         .build(500, 500);
     
     tiny_gui::Painter::draw_char(fb, RobotoRegular8Font, tiny_gui::RED, 200, 200, 'A');
-    tiny_gui::Painter::draw_string(fb, RobotoRegular8Font, tiny_gui::RED, 200, 300, "Hello!");
+    tiny_gui::Painter::draw_string(fb, HelveticaBold12Font, tiny_gui::RED, 200, 300, "Wave");
 
     int x = 0;
     tiny_gui::Rect clearRect;
