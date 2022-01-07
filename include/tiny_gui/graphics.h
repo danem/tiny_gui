@@ -32,7 +32,7 @@ public:
     static void fill_color (FrameBuffer& fb, Color color);     
     static void fill_color (FrameBufferView& fb, Color color);     
 
-    static Rect get_string_dimensions (const Font& font, const std::string& str);
+    static Rect get_text_bounds (const Font& font, uint32_t x, uint32_t y, const std::string& str);
     static void draw_string (FrameBuffer& fb, const Font& font, Color color, const Rect& rect, const std::string& str);
     static Rect draw_string (FrameBuffer& fb, const Font& font, Color color, uint32_t x, uint32_t y, const std::string& str);
     static Rect draw_char (FrameBuffer& fb, const Font& font, Color color, uint32_t x, uint32_t y, const char letter);

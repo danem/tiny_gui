@@ -92,20 +92,49 @@ void Painter::fill_color (FrameBufferView& fb, Color color) {
     fb.set_all(color);
 }
 
+void _getCharBounds (const Font& font, const Glyph& glyph, uint32_t& x, uint32_t& y, Rect& maxRect){
+    if (glyph.char_code == '\n'){
+        x = 0;
+        y = font.yAdvance; // TODO: This might be wrong
+    }
+    else {
+        uint8_t gw = glyph.width;
+        uint8_t gh = glyph.height;
+        uint8_t xa = glyph.xAdvance;
+        int8_t xo = glyph.xOffset;
+        int8_t yo = glyph.yOffset;
+        int x1 = x + xo;
+        int y1 = y + yo;
+        int x2 = x1 + gw - 1;
+        int y2 = y1 + gh - 1;
+        maxRect.left = std::min(maxRect.left, x1);
+        maxRect.right = std::max(maxRect.right, x2);
+        maxRect.top = std::min(maxRect.top, y1);
+        maxRect.bottom = std::max(maxRect.bottom, y2);
+        x += xa;
+    }
 
+}
 
-// TODO: Doesn't handle new lines
-Rect Painter::get_string_dimensions (const Font& font, const std::string& str) {
+Rect Painter::get_text_bounds (const Font& font, uint32_t x, uint32_t y, const std::string& str) {
     Rect out;
+    Rect maxRect{10000,-10000,100000,-10000};
     Glyph glyph;
     for (const auto& c : str){
         if (!tiny_gui::getGlyph(font, c, glyph)) {
             // TODO:
             continue;
         }
-        // TODO: Doesn't account for newlines
-        out.bottom = std::max(static_cast<int>(glyph.height), out.bottom);
-        out.right += glyph.width + glyph.xAdvance;
+        _getCharBounds(font, glyph, x, y, maxRect);
+    }
+    if (maxRect.right >= maxRect.left){
+        out.left = maxRect.left;
+        out.right = out.left + maxRect.width() + 1;
+    }
+    if (maxRect.bottom >= maxRect.top){
+        out.top = maxRect.top;
+        out.bottom = out.top + maxRect.height() + 1;
+
     }
     return out;
 }

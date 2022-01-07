@@ -26,7 +26,7 @@ void PushButton::render (FrameBuffer& fb, const Rect& rect) {
     else buttonColor = _style.background_color;
     Painter::fill_rect(fb, rect, buttonColor);
 
-    Rect str_rect = Painter::get_string_dimensions(*_style.font, _text);
+    Rect str_rect = Painter::get_text_bounds(*_style.font,0,0, _text);
     Rect new_rect = centered_rect(rect, str_rect);
     Painter::draw_string(fb, *_style.font, _style.font_color, new_rect.left, new_rect.top, _text);
 }
