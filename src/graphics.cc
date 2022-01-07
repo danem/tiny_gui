@@ -159,8 +159,7 @@ Rect Painter::draw_string (FrameBuffer& fb, const Font& font, Color color, uint3
 }
 
 void Painter::draw_string (FrameBuffer& fb, const Font& font, Color color, const Rect& rect, const std::string& str){
-
-
+    draw_string(fb, font, color, rect.left, rect.top, str);
 }
 
 
