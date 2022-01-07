@@ -8,7 +8,6 @@ namespace tiny_gui {
 
 class FrameBuffer{
 public:
-    FrameBuffer() {}
     virtual void write (tiny_gui::color_type color, uint32_t x, uint32_t y) {}
     virtual void set_all (tiny_gui::color_type color) {}
     virtual void write_rect (tiny_gui::color_type color, const Rect& rect) {}
