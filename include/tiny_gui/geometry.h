@@ -22,6 +22,13 @@ struct Rect {
     inline bool point_inside (int x, int y){
 		return x >= left && x <= right && y >= top && y <= bottom;
     }
+
+    inline void translate (int x, int y) {
+        top += y;
+        bottom += y;
+        left += x;
+        right += x;
+    }
 };
 
 struct Point {
