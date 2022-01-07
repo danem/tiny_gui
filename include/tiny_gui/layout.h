@@ -166,6 +166,8 @@ protected:
     // TODO: Look at smart pointers
 
 public:
+    LayoutItem () {}
+
     LayoutItem (LayoutProperties layout, LayoutCalculator* layoutFn = DefaultLayout) :
         _layout(layout),
         _layoutFn(layoutFn)
