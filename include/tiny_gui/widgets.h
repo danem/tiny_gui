@@ -42,6 +42,10 @@ public:
         return *this;
     }
 
+    operator Style() {
+        return _style;
+    }
+
     Style build () {
         return _style;
     }
