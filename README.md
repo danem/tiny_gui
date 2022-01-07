@@ -9,6 +9,8 @@ lvgl, guilite, imgui, etc.
 * <15kb
 * <2000 lines of code
 
+Still very much a work in progress.
+
 ### Features
 * No dependencies
 * Extremely portable
