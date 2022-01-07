@@ -9,8 +9,7 @@ static Rect centered_rect (const Rect& fixed, const Rect& other){
     int cx = fixed.left + (fixed.width() / 2);
     int cy = fixed.top + (fixed.height() / 2);
 
-    out.left = cx - (other.width() / 2);
-    out.top = cy - (other.height() / 2);
+    out.position(cx - (other.width()/2), cy - (other.height() / 2));
     return out;
 }
 
@@ -27,8 +26,10 @@ void PushButton::render (FrameBuffer& fb, const Rect& rect) {
     Painter::fill_rect(fb, rect, buttonColor);
 
     Rect str_rect = Painter::get_text_bounds(*_style.font,0,0, _text);
-    Rect new_rect = centered_rect(rect, str_rect);
-    Painter::draw_string(fb, *_style.font, _style.font_color, new_rect.left, new_rect.top, _text);
+    Rect newRect = centered_rect(rect, str_rect);
+    // Hack to deal with font offset...
+    newRect.position(newRect.left - str_rect.left, newRect.top - str_rect.top);
+    Painter::draw_string(fb, *_style.font, _style.font_color, newRect.left, newRect.top, _text);
 }
 
 void Label::setText (const std::string& str){

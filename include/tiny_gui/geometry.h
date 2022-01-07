@@ -23,11 +23,11 @@ struct Rect {
 		return x >= left && x <= right && y >= top && y <= bottom;
     }
 
-    inline void translate (int x, int y) {
-        top += y;
-        bottom += y;
-        left += x;
-        right += x;
+    inline void position (int x, int y) {
+        int h = height();
+        int w = width();
+        top = y; bottom = top + h;
+        left = x; right = left + w;
     }
 };
 
