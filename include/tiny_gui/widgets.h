@@ -61,7 +61,7 @@ enum class WidgetState {
 };
 
 enum class MouseEventState {
-    MOUSE_DOWN, MOUSE_UP, MOUSE_OVER, NONE
+    NONE, MOUSE_DOWN, MOUSE_UP, MOUSE_OVER
 };
 
 class Widget {
