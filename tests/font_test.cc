@@ -12,8 +12,7 @@
 
 int main () {
     std::array<uint32_t, 500*500> frame_buffer = {0};
-    tiny_gui::FrameBuffer fb{frame_buffer.data(), 500, 500};
-    tiny_gui::FrameBufferView fbv = fb.view();
+    tiny_gui::FrameBufferMemory fb{frame_buffer.data(), 500, 500};
 
     sgl::Context ctx{500,500,"Foo"};
     sgl::MeshResource plane =  sgl::createPlane(1);
@@ -23,8 +22,22 @@ int main () {
         .format(GL_RGBA, GL_RGBA8)
         .build(500, 500);
     
-    tiny_gui::Painter::draw_char(fb, RobotoRegular8Font, tiny_gui::RED, 200, 200, 'A');
-    tiny_gui::Painter::draw_string(fb, HelveticaBold12Font, tiny_gui::RED, 200, 300, "Wave");
+    tiny_gui::Rect rect; 
+    rect = tiny_gui::Painter::draw_string(fb, HelveticaBold12Font, tiny_gui::WHITE, 10, 30, "abcdefghijklmnopqrstuvwxyz");
+    rect = tiny_gui::Painter::draw_string(fb, HelveticaBold12Font, tiny_gui::WHITE, 10, rect.bottom+30, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    rect = tiny_gui::Painter::draw_string(fb, HelveticaBold12Font, tiny_gui::WHITE, 10, rect.bottom+30, "0123456789");
+    rect = tiny_gui::Painter::draw_string(fb, HelveticaBold7Font, tiny_gui::WHITE, 10, rect.bottom+20, "abcdefghijklmnopqrstuvwxyz");
+    rect = tiny_gui::Painter::draw_string(fb, HelveticaBold7Font, tiny_gui::WHITE, 10, rect.bottom+20, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    rect = tiny_gui::Painter::draw_string(fb, HelveticaBold7Font, tiny_gui::WHITE, 10, rect.bottom+20, "0123456789");
+    rect = tiny_gui::Painter::draw_string(fb, HelveticaBold5Font, tiny_gui::WHITE, 10, rect.bottom+15, "abcdefghijklmnopqrstuvwxyz");
+    rect = tiny_gui::Painter::draw_string(fb, HelveticaBold5Font, tiny_gui::WHITE, 10, rect.bottom+15, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    rect = tiny_gui::Painter::draw_string(fb, HelveticaBold5Font, tiny_gui::WHITE, 10, rect.bottom+15, "0123456789");
+    rect = tiny_gui::Painter::draw_string(fb, RobotoRegular8Font, tiny_gui::WHITE, 10, rect.bottom+15, "abcdefghijklmnopqrstuvwxyz");
+    rect = tiny_gui::Painter::draw_string(fb, RobotoRegular8Font, tiny_gui::WHITE, 10, rect.bottom+15, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    rect = tiny_gui::Painter::draw_string(fb, RobotoRegular8Font, tiny_gui::WHITE, 10, rect.bottom+15, "0123456789");
+    rect = tiny_gui::Painter::draw_string(fb, RobotoRegular14Font, tiny_gui::WHITE, 10, rect.bottom+30, "abcdefghijklmnopqrstuvwxyz");
+    rect = tiny_gui::Painter::draw_string(fb, RobotoRegular14Font, tiny_gui::WHITE, 10, rect.bottom+30, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    rect = tiny_gui::Painter::draw_string(fb, RobotoRegular14Font, tiny_gui::WHITE, 10, rect.bottom+30, "0123456789");
 
     int x = 0;
     tiny_gui::Rect clearRect;
@@ -35,9 +48,14 @@ int main () {
 
         x += 1;
         std::string num = std::to_string(x);
-        tiny_gui::Rect r = tiny_gui::Painter::get_text_bounds(RobotoRegular8Font, 200, 400, num);
+        tiny_gui::Rect r;
+        r = tiny_gui::Painter::get_text_bounds(RobotoRegular8Font, 200, 400, num);
         tiny_gui::Painter::fill_rect(fb, r, tiny_gui::BLUE);
         tiny_gui::Painter::draw_string(fb, RobotoRegular8Font, tiny_gui::RED, 200, 400, num);
+
+        r = tiny_gui::Painter::get_text_bounds(HelveticaBold12Font, 200, 450, num);
+        tiny_gui::Painter::fill_rect(fb, r, tiny_gui::BLUE);
+        tiny_gui::Painter::draw_string(fb, HelveticaBold12Font, tiny_gui::RED, 200, 450, num);
 
         sgl::updateTexture(fb_tx, frame_buffer.data());
 
