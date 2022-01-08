@@ -34,8 +34,8 @@ tiny_gui::LayoutItem _pane1{tiny_gui::LayoutBuilder().dimensions_relative(1,0.75
 tiny_gui::LayoutItem _divider{_dividerWidget, tiny_gui::LayoutBuilder().dimensions(tiny_gui::Measurement::R(1), tiny_gui::Measurement::A(1))};
 tiny_gui::LayoutItem _pane2{tiny_gui::LayoutBuilder()
     .dimensions_relative(1,0.20)
-    .padding(0, 5, 0, 5)
-    .spacing(10), 
+    .padding(0, 15, 0, 15)
+    .spacing(5), 
     tiny_gui::HorizontalLayout
 };
 

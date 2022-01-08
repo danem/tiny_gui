@@ -53,12 +53,17 @@ Rect DefaultLayout (const Rect& container, const LayoutProperties& layout, Layou
 
 Rect VerticalLayout (const Rect& container, const LayoutProperties& layout, LayoutItem* children) {
     LayoutState state;
+    Rect padded = container;
+    padded.left += layout.pad_left;
+    padded.top  += layout.pad_top;
+    padded.right -= layout.pad_right;
+    padded.bottom -= layout.pad_bottom;
     if (children) {
-        __calculateStretch(container, layout, children, state);
+        __calculateStretch(padded, layout, children, state);
         for(list_head& list : list_iterator{children->_sibling_list}){
             LayoutItem* item = list_entry(&list, LayoutItem, _sibling_list);
-            Rect resRect = item->_calculateLayoutSelf(state, container);
-            item->_calculateLayoutChildren(state, container);
+            Rect resRect = item->_calculateLayoutSelf(state, padded);
+            item->_calculateLayoutChildren(state, padded);
             state.offsetY = resRect.bottom + layout.spacing;
         }
     }
@@ -66,12 +71,17 @@ Rect VerticalLayout (const Rect& container, const LayoutProperties& layout, Layo
 
 Rect HorizontalLayout (const Rect& container, const LayoutProperties& layout, LayoutItem* children) {
     LayoutState state;
+    Rect padded = container;
+    padded.left += layout.pad_left;
+    padded.top  += layout.pad_top;
+    padded.right -= layout.pad_right;
+    padded.bottom -= layout.pad_bottom;
     if (children) {
-        __calculateStretch(container, layout, children, state);
+        __calculateStretch(padded, layout, children, state);
         for(list_head& list : list_iterator{children->_sibling_list}){
             LayoutItem* item = list_entry(&list, LayoutItem, _sibling_list);
-            Rect resRect = item->_calculateLayoutSelf(state, container);
-            item->_calculateLayoutChildren(state, container);
+            Rect resRect = item->_calculateLayoutSelf(state, padded);
+            item->_calculateLayoutChildren(state, padded);
             state.offsetX = resRect.right + layout.spacing;
         }
     }
@@ -91,8 +101,8 @@ Rect LayoutItem::_calculateLayoutSelf (LayoutState& state, const Rect& container
 
     int cx = container.left + (container.width() / 2);
     int cy = container.top + (container.height() / 2);
-    int x = _layout.left + state.offsetX + _layout.pad_left;
-    int y = _layout.top + state.offsetY + _layout.pad_top;
+    int x = _layout.left + state.offsetX;
+    int y = _layout.top + state.offsetY;
 
     if (_layout.vertical_alignment == Alignment::CENTER) {
         y = cy - (height / 2);
