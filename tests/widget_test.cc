@@ -34,16 +34,19 @@ tiny_gui::LayoutItem _pane1{tiny_gui::LayoutBuilder().dimensions_relative(1,0.75
 tiny_gui::LayoutItem _divider{_dividerWidget, tiny_gui::LayoutBuilder().dimensions(tiny_gui::Measurement::R(1), tiny_gui::Measurement::A(1))};
 tiny_gui::LayoutItem _pane2{tiny_gui::LayoutBuilder()
     .dimensions_relative(1,0.20)
-    .spacing(5), 
+    .padding(0, 5, 0, 5)
+    .spacing(10), 
     tiny_gui::HorizontalLayout
 };
 
 tiny_gui::LayoutProperties _button_layout = tiny_gui::LayoutBuilder()
-    .dimensions_relative(0.3,0.7)
+    .dimensions_relative(0,0.7)
+    .size_policy(tiny_gui::SizePolicy::STRETCH, tiny_gui::SizePolicy::NONE)
     .vertical_alignment(tiny_gui::Alignment::CENTER);
 
 tiny_gui::LayoutProperties _menu_layout = tiny_gui::LayoutBuilder()
-    .dimensions_relative(0.3, 1);
+    .dimensions_relative(0, 1)
+    .size_policy(tiny_gui::SizePolicy::STRETCH, tiny_gui::SizePolicy::NONE);
 
 tiny_gui::LayoutItem _button1Item{_button1, _button_layout};
 tiny_gui::LayoutItem _button2Item{_button2, _button_layout};

@@ -18,6 +18,30 @@ Rect clampRect (const Rect& fixed, const Rect& other){
     return ret;
 }
 
+// TODO: Make LayoutItem* const
+void __calculateStretch (const Rect& container, const LayoutProperties& layout, LayoutItem* children, LayoutState& ls){
+    int childrenCount = 0;
+    if (children) childrenCount = list_length(children->_sibling_list);
+
+    int availableWidth = container.width() - layout.pad_left - layout.pad_right - (layout.spacing * (childrenCount-1));
+    int availableHeight = container.height() - layout.pad_top - layout.pad_bottom - (layout.spacing * (childrenCount-1));
+    int stretchXItems = 0;
+    int stretchYItems = 0;
+
+    if (children) {
+        for(list_head& list : list_iterator{children->_sibling_list}){
+            LayoutItem* item = list_entry(&list, LayoutItem, _sibling_list);
+            if (item->_layout.width_policy == SizePolicy::STRETCH) stretchXItems += 1;
+            else availableWidth -= item->_layout.width.value(container.width());
+
+            if (item->_layout.height_policy == SizePolicy::STRETCH) stretchYItems += 1;
+            else availableHeight -= item->_layout.height.value(container.height());
+        }
+        ls.stretchSizeX = (int)((float)availableWidth / (float)stretchXItems);
+        ls.stretchSizeY = (int)((float)availableHeight / (float)stretchYItems);
+    }
+}
+
 Rect DefaultLayout (const Rect& container, const LayoutProperties& layout, LayoutItem* children) {
     if (children) {
         for(list_head& list : list_iterator{children->_sibling_list}){
@@ -28,59 +52,84 @@ Rect DefaultLayout (const Rect& container, const LayoutProperties& layout, Layou
 }
 
 Rect VerticalLayout (const Rect& container, const LayoutProperties& layout, LayoutItem* children) {
-    int top = 0;
+    LayoutState state;
     if (children) {
+        __calculateStretch(container, layout, children, state);
         for(list_head& list : list_iterator{children->_sibling_list}){
             LayoutItem* item = list_entry(&list, LayoutItem, _sibling_list);
-            Rect resRect = item->calculateLayout(container, {0, top});
-            top = resRect.bottom + layout.spacing;
+            Rect resRect = item->_calculateLayoutSelf(state, container);
+            item->_calculateLayoutChildren(state, container);
+            state.offsetY = resRect.bottom + layout.spacing;
         }
     }
 }
 
 Rect HorizontalLayout (const Rect& container, const LayoutProperties& layout, LayoutItem* children) {
-    int right = 0;
+    LayoutState state;
     if (children) {
+        __calculateStretch(container, layout, children, state);
         for(list_head& list : list_iterator{children->_sibling_list}){
             LayoutItem* item = list_entry(&list, LayoutItem, _sibling_list);
-            Rect resRect = item->calculateLayout(container, {right, 0});
-            right = resRect.right + layout.spacing;
+            Rect resRect = item->_calculateLayoutSelf(state, container);
+            item->_calculateLayoutChildren(state, container);
+            state.offsetX = resRect.right + layout.spacing;
         }
     }
 }
 
+Rect LayoutItem::_calculateLayoutSelf (LayoutState& state, const Rect& container) {
+    // Calculate position and size of LayoutItem, but not its children.
+    // Handle centering, and stretching here
+    int width = 0;
+    int height = 0;
 
-Rect LayoutItem::calculateLayout (const Rect& container, const Point& offset) {
-    int width = _layout.width.value(container.width());
-    int height = _layout.height.value(container.height());
-    int cx = container.left + (container.width()/2);
-    _computedDims.left = _layout.left + offset.x;
-    _computedDims.top = _layout.top + offset.y;
+    if (_layout.width_policy == SizePolicy::STRETCH) width = state.stretchSizeX;
+    else width = _layout.width.value(container.width());
 
-    if (_layout.vertical_alignment == Alignment::CENTER){
-        int cy = container.top + (container.height()/2);
-        _computedDims.top += cy - (height / 2);
+    if (_layout.height_policy == SizePolicy::STRETCH) height = state.stretchSizeY;
+    else height = _layout.height.value(container.height());
+
+    int cx = container.left + (container.width() / 2);
+    int cy = container.top + (container.height() / 2);
+    int x = _layout.left + state.offsetX + _layout.pad_left;
+    int y = _layout.top + state.offsetY + _layout.pad_top;
+
+    if (_layout.vertical_alignment == Alignment::CENTER) {
+        y = cy - (height / 2);
     }
-    else _computedDims.top += container.top;
+    else y += container.top;
+
     if (_layout.horizontal_alignment == Alignment::CENTER){
-        int cx = container.left + (container.width()/2);
-        _computedDims.left += cx - width / 2;
+        x = cx - (width / 2);
     }
-    else _computedDims.left += container.left;
+    else x += container.left;
 
-    _computedDims.right = _computedDims.left + width;
-    _computedDims.bottom = _computedDims.top + height;
+    _computedDims.left = x;
+    _computedDims.top = y;
+    _computedDims.right = x + width;
+    _computedDims.bottom = y + height;
     _computedDims = clampRect(container, _computedDims);
-
-    if (_layoutFn) {
-        _layoutFn(_computedDims, _layout, _children);
-    }
     return _computedDims;
 }
 
-Rect LayoutItem::calculateLayout (uint32_t width, uint32_t height, const Point& offset){
-    Rect r{0, static_cast<int>(height), 0, static_cast<int>(width)};
-    return calculateLayout(r, offset);
+void LayoutItem::_calculateLayoutChildren (LayoutState& state, const Rect& container) {
+    if (_layoutFn) {
+        _layoutFn(_computedDims, _layout, _children);
+    }
+}
+
+
+Rect LayoutItem::calculateLayout (const Rect& container) {
+    LayoutState state;
+    _calculateLayoutSelf(state, container);
+    _calculateLayoutChildren(state, container);
+}
+
+Rect LayoutItem::calculateLayout (uint32_t width, uint32_t height){
+    Rect rect;
+    rect.right = width;
+    rect.bottom = height;
+    calculateLayout(rect);
 }
 
 void LayoutItem::render (FrameBuffer& fb) {

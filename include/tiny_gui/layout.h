@@ -57,12 +57,14 @@ public:
 };
 
 struct LayoutProperties {
+    SizePolicy width_policy = SizePolicy::NONE;
+    SizePolicy height_policy = SizePolicy::NONE;
     Measurement width = Measurement::Absolute(0);
     Measurement height = Measurement::Absolute(0);
-    Measurement pad_left = Measurement::Absolute(0);
-    Measurement pad_right = Measurement::Absolute(0);
-    Measurement pad_top = Measurement::Absolute(0);
-    Measurement pad_bottom = Measurement::Absolute(0);
+    int pad_left = 0;
+    int pad_right = 0;
+    int pad_top = 0;
+    int pad_bottom = 0;
     Alignment vertical_alignment = Alignment::NONE;
     Alignment horizontal_alignment = Alignment::NONE;
     int spacing = 0;
@@ -74,6 +76,12 @@ class LayoutBuilder {
 private:
     LayoutProperties _properties;
 public:
+    LayoutBuilder& size_policy (SizePolicy width, SizePolicy height){
+        _properties.width_policy = width;
+        _properties.height_policy = height;
+        return *this;
+    }
+
     LayoutBuilder& dimensions (const Measurement& width, const Measurement& height) {
         _properties.width = width;
         _properties.height = height;
@@ -107,7 +115,7 @@ public:
         return *this;
     }
 
-    LayoutBuilder& padding (const Measurement& top, const Measurement& bottom, const Measurement& left, const Measurement& right) {
+    LayoutBuilder& padding (int top, int left, int bottom, int right) {
         _properties.pad_top = top;
         _properties.pad_left = left;
         _properties.pad_bottom = bottom;
@@ -135,6 +143,13 @@ public:
     }
 };
 
+struct LayoutState {
+    int stretchSizeX = 0;
+    int stretchSizeY = 0;
+    int offsetX = 0;
+    int offsetY = 0;
+};
+
 
 class LayoutItem;
 
@@ -154,16 +169,18 @@ public:
     // dynamic lists without any memory allocatioh.
     // However, this will NOT work with any subclasses of LayoutItem.
     list_head _sibling_list;
-    LayoutItem* _children;
-    LayoutCalculator* _layoutFn;
+    LayoutItem* _children = nullptr;
+    LayoutCalculator* _layoutFn = nullptr;
     Rect _computedDims;
     LayoutProperties _layout;
-    Widget* _widget;
+    Widget* _widget = nullptr;
+
+    Rect _calculateLayoutSelf (LayoutState& state, const Rect& container);
+    void _calculateLayoutChildren (LayoutState& state, const Rect& container);
 
 private:
 protected:
 
-    // TODO: Look at smart pointers
 
 public:
     LayoutItem () {}
@@ -185,8 +202,9 @@ public:
         _layoutFn(layoutFn)
     {}
 
-    Rect calculateLayout (uint32_t width, uint32_t height, const Point& offset = {0,0});
-    Rect calculateLayout (const Rect& container, const Point& offset = {0,0});
+    Rect calculateLayout (uint32_t width, uint32_t height);
+    Rect calculateLayout (const Rect& container);
+
     void render (FrameBuffer& fb);
     void addChild (LayoutItem& item);
     void setWidget (Widget& widget);
