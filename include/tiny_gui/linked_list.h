@@ -41,7 +41,7 @@
 namespace tiny_gui {
 
 struct list_head {
-    list_head* next;
+    list_head* next = nullptr;
 };
 
 class list_iterator {
